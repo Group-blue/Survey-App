@@ -35,4 +35,7 @@ public class Course {
 
     @ManyToMany(mappedBy = "courses")
     private Set<Student> students;
+
+    @OneToMany(mappedBy = "course")
+    private Set<Survey> surveys;
 }

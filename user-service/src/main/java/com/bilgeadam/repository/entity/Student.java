@@ -28,4 +28,7 @@ public class Student extends Person{
             @JoinColumn(name = "course_id")
     })
     private Set<Course> courses;
+
+    @OneToMany(mappedBy = "student")
+    private Set<StudentAnswers> answers;
 }

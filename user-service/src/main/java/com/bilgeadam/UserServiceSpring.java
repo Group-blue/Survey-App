@@ -41,26 +41,26 @@ public class UserServiceSpring implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Student student = Student.builder().firstname("Ali").province("Ankara").build();
-        Student student2 = Student.builder().firstname("Veli").province("Istanbul").build();
-        iStudentRepository.save(student);
-        iStudentRepository.save(student2);
-
-        Teacher teacher = Teacher.builder().firstname("Hamit").build();
-        Teacher teacher2 = Teacher.builder().firstname("Hamit").lastname("Mizrak").build();
-        iTeacherRepository.save(teacher);
-        iTeacherRepository.save(teacher2);
-
-        Branch branch = Branch.builder().name("Kadikoy").build();
-        iBranchRepository.save(branch);
-
-        Set<Student> students = new HashSet<>();
-        students.add(student);
-        students.add(student2);
-
-
-        Course course = Course.builder().name("Java").branch(branch).masterTrainer(teacher).assistantTrainer(teacher2).students(students).build();
-        iCourseRepository.save(course);
+//        Student student = Student.builder().firstname("Ali").province("Ankara").build();
+//        Student student2 = Student.builder().firstname("Veli").province("Istanbul").build();
+//        iStudentRepository.save(student);
+//        iStudentRepository.save(student2);
+//
+//        Teacher teacher = Teacher.builder().firstname("Hamit").build();
+//        Teacher teacher2 = Teacher.builder().firstname("Hamit").lastname("Mizrak").build();
+//        iTeacherRepository.save(teacher);
+//        iTeacherRepository.save(teacher2);
+//
+//        Branch branch = Branch.builder().name("Kadikoy").build();
+//        iBranchRepository.save(branch);
+//
+//        Set<Student> students = new HashSet<>();
+//        students.add(student);
+//        students.add(student2);
+//
+//
+//        Course course = Course.builder().name("Java").branch(branch).masterTrainer(teacher).assistantTrainer(teacher2).students(students).build();
+//        iCourseRepository.save(course);
 
 
     }
