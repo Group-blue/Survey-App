@@ -1,0 +1,6 @@
+rootProject.name = 'SurveyApp'
+include 'user-service'
+include 'survey-service'
+include 'reporting-service'
+include 'config-server'
+

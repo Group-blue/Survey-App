@@ -1,0 +1,2 @@
+server:
+  port: ${SURVEYAPP_CONFIG_SERVER_PORT}

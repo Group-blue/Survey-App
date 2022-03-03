@@ -1,0 +1,25 @@
+server:
+  port: ${SURVEYAPP_SURVEY_SVC_PORT}
+
+spring:
+  rabbitmq:
+    host: ${SURVEYAPP_TOOLS_LOADBALANCER_IP}
+    port: ${SURVEYAPP_TOOLS_RABBIT_PORT}
+    username: ${SURVEYAPP_TOOLS_ADMIN_USERNAME}
+    password: ${SURVEYAPP_TOOLS_ADMIN_PASSWORD}
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${SURVEYAPP_TOOLS_LOADBALANCER_IP}:${SURVEYAPP_TOOLS_POSTGRES_PORT}/surveyapp
+    username: ${SURVEYAPP_TOOLS_POSTGRES_USERNAME}
+    password: ${SURVEYAPP_TOOLS_ADMIN_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      format-sql: true
+  zipkin:
+    enabled: true
+    base-url: ${SURVEYAPP_TOOLS_LOADBALANCER_IP_HTTP}:${SURVEYAPP_TOOLS_ZIPKIN_PORT}
+    service:
+      name: survey-service
