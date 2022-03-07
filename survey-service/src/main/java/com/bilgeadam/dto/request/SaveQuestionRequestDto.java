@@ -14,7 +14,7 @@ public class SaveQuestionRequestDto {
     private int orderNo;
     private String title;
     private String text;
-    private String type;
+    private int type;
     private boolean isOptional;
     private List<SaveOptionRequestDto> options;
 }

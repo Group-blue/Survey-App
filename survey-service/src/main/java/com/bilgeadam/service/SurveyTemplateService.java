@@ -46,13 +46,18 @@ public class SurveyTemplateService {
             Question tempQuestion = mapper.mapQuestionDtoToQuestion(saveQuestionRequestDto);
             if (!saveQuestionRequestDto.getOptions().isEmpty()){
                 List<PossibleAnswers> possibleAnswersList = possibleAnswersService.mapOptionRequestDtoToPossibleAnswers(saveQuestionRequestDto.getOptions());
-                List<PossibleAnswers> possibleAnswersListFromDb = possibleAnswersService.saveList(possibleAnswersList);
-                tempQuestion.setPossibleAnswers(Set.copyOf(possibleAnswersListFromDb));
+                for(PossibleAnswers possibleAnswer : possibleAnswersList){
+                    possibleAnswer.setQuestion(tempQuestion);
+                }
+                tempQuestion.setPossibleAnswers(Set.copyOf(possibleAnswersList));
             }
             questions.add(tempQuestion);
         }
 
         List<Question> questionsFromDb = questionService.saveList(questions);
+        for(Question question: questionsFromDb){
+            possibleAnswersService.saveList(new ArrayList<>(question.getPossibleAnswers()));
+        }
 
         SurveyTemplate surveyTemplate;
         if (!saveTemplateRequestDto.isDraft()){

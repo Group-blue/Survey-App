@@ -20,14 +20,12 @@ public class Question {
     private String title;
     private String text;
     private boolean isOptional;
+    private int type;
 
     @ManyToOne
     @JoinColumn(name = "question_category_id")
     private QuestionCategory questionCategory;
 
-    @ManyToOne
-    @JoinColumn(name = "question_type_id")
-    private QuestionType questionType;
 
     @ManyToMany(mappedBy = "questions")
     private Set<SurveyTemplate> surveyTemplates;
