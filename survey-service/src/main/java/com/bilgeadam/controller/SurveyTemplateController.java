@@ -1,10 +1,13 @@
 package com.bilgeadam.controller;
 
 import com.bilgeadam.dto.request.SaveTemplateRequestDto;
+import com.bilgeadam.dto.response.ListAllTemplateResponseDto;
 import com.bilgeadam.service.SurveyTemplateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @CrossOrigin(origins = "*")
@@ -22,4 +25,14 @@ public class SurveyTemplateController {
         surveyTemplateService.saveSurveyTemplate(dto);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/listalltemplates")
+    public ResponseEntity<List<ListAllTemplateResponseDto>> listAllTemplates(){
+    return ResponseEntity.ok(surveyTemplateService.listAllTemplates());
+    }
+
+//    public ResponseEntity<dto> findTemplateById(@RequestParam long id){
+//
+//        return ResponseEntity.ok(dto);
+//    }
 }

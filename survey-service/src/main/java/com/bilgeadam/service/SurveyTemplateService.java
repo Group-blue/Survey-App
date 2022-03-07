@@ -1,8 +1,8 @@
 package com.bilgeadam.service;
 
-import com.bilgeadam.dto.request.SaveOptionRequestDto;
 import com.bilgeadam.dto.request.SaveQuestionRequestDto;
 import com.bilgeadam.dto.request.SaveTemplateRequestDto;
+import com.bilgeadam.dto.response.ListAllTemplateResponseDto;
 import com.bilgeadam.mapper.SurveyTemplateMapper;
 import com.bilgeadam.repository.ISurveyTemlateRepository;
 import com.bilgeadam.repository.entity.PossibleAnswers;
@@ -23,8 +23,7 @@ public class SurveyTemplateService {
     private final QuestionService questionService;
     private final SurveyTemplateMapper mapper;
 
-    public SurveyTemplateService(ISurveyTemlateRepository surveyTemlateRepository, PossibleAnswersService possibleAnswersService,
-                                 QuestionService questionService, SurveyTemplateMapper mapper) {
+    public SurveyTemplateService(ISurveyTemlateRepository surveyTemlateRepository, PossibleAnswersService possibleAnswersService, QuestionService questionService, SurveyTemplateMapper mapper) {
         this.surveyTemlateRepository = surveyTemlateRepository;
         this.possibleAnswersService = possibleAnswersService;
         this.questionService = questionService;
@@ -37,6 +36,9 @@ public class SurveyTemplateService {
 
     public List<SurveyTemplate> saveList(List<SurveyTemplate> surveyTemplates){
         return surveyTemlateRepository.saveAll(surveyTemplates);
+    }
+    public List<SurveyTemplate> listSurveyTemplates(List<SurveyTemplate> surveyTemplates){
+        return surveyTemlateRepository.findAll();
     }
 
     @Transactional
@@ -76,5 +78,19 @@ public class SurveyTemplateService {
                     .build();
         }
         surveyTemlateRepository.save(surveyTemplate);
+    }
+
+    public List<ListAllTemplateResponseDto> listAllTemplates (){
+    List<SurveyTemplate> templates = surveyTemlateRepository.findAll();
+    List<ListAllTemplateResponseDto> dtos= new ArrayList<>();
+        for (SurveyTemplate surveyTemplate: templates) {
+            dtos.add(ListAllTemplateResponseDto.builder()
+                            .id(surveyTemplate.getId())
+                            .isDraft(surveyTemplate.isDraft())
+                            .templateName(surveyTemplate.getTemplateCode())
+                            .validityStartDate(surveyTemplate.getValidityStartDate())
+                    .build());
+        }
+        return dtos;
     }
 }
