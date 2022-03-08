@@ -1,8 +1,12 @@
 package com.bilgeadam.service;
 
+import com.bilgeadam.dto.request.SaveOptionRequestDto;
 import com.bilgeadam.dto.request.SaveQuestionRequestDto;
 import com.bilgeadam.dto.request.SaveTemplateRequestDto;
 import com.bilgeadam.dto.response.ListAllTemplateResponseDto;
+import com.bilgeadam.dto.response.OptionDetailsResponseDto;
+import com.bilgeadam.dto.response.QuestionDetailResponseDto;
+import com.bilgeadam.dto.response.TemplateDetailsResponseDto;
 import com.bilgeadam.mapper.SurveyTemplateMapper;
 import com.bilgeadam.repository.ISurveyTemlateRepository;
 import com.bilgeadam.repository.entity.PossibleAnswers;
@@ -11,10 +15,7 @@ import com.bilgeadam.repository.entity.SurveyTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class SurveyTemplateService {
@@ -23,7 +24,8 @@ public class SurveyTemplateService {
     private final QuestionService questionService;
     private final SurveyTemplateMapper mapper;
 
-    public SurveyTemplateService(ISurveyTemlateRepository surveyTemlateRepository, PossibleAnswersService possibleAnswersService, QuestionService questionService, SurveyTemplateMapper mapper) {
+    public SurveyTemplateService(ISurveyTemlateRepository surveyTemlateRepository, PossibleAnswersService possibleAnswersService,
+                                 QuestionService questionService, SurveyTemplateMapper mapper) {
         this.surveyTemlateRepository = surveyTemlateRepository;
         this.possibleAnswersService = possibleAnswersService;
         this.questionService = questionService;
@@ -36,9 +38,6 @@ public class SurveyTemplateService {
 
     public List<SurveyTemplate> saveList(List<SurveyTemplate> surveyTemplates){
         return surveyTemlateRepository.saveAll(surveyTemplates);
-    }
-    public List<SurveyTemplate> listSurveyTemplates(List<SurveyTemplate> surveyTemplates){
-        return surveyTemlateRepository.findAll();
     }
 
     @Transactional
@@ -81,16 +80,64 @@ public class SurveyTemplateService {
     }
 
     public List<ListAllTemplateResponseDto> listAllTemplates (){
-    List<SurveyTemplate> templates = surveyTemlateRepository.findAll();
-    List<ListAllTemplateResponseDto> dtos= new ArrayList<>();
+        List<SurveyTemplate> templates = surveyTemlateRepository.findAll();
+        List<ListAllTemplateResponseDto> dtos= new ArrayList<>();
         for (SurveyTemplate surveyTemplate: templates) {
             dtos.add(ListAllTemplateResponseDto.builder()
-                            .id(surveyTemplate.getId())
-                            .isDraft(surveyTemplate.isDraft())
-                            .templateName(surveyTemplate.getTemplateCode())
-                            .validityStartDate(surveyTemplate.getValidityStartDate())
+                    .id(surveyTemplate.getId())
+                    .isDraft(surveyTemplate.isDraft())
+                    .templateName(surveyTemplate.getTemplateCode())
+                    .validityStartDate(surveyTemplate.getValidityStartDate())
                     .build());
         }
         return dtos;
+    }
+
+    public TemplateDetailsResponseDto getTemplateDetailsById(long templateId){
+        Optional<SurveyTemplate> templateOptional = surveyTemlateRepository.findById(templateId);
+        TemplateDetailsResponseDto templateDetailsResponseDto;
+        if (templateOptional.isPresent()){
+            Set<QuestionDetailResponseDto> questionDetailResponseDtos = new HashSet<>();
+            SurveyTemplate template = templateOptional.get();
+
+            for (Question question:template.getQuestions()){
+                Set<OptionDetailsResponseDto> optionDetailsResponseDtos = new HashSet<>();
+                for (PossibleAnswers answers: question.getPossibleAnswers()){
+                    OptionDetailsResponseDto tempAnswer = OptionDetailsResponseDto.builder()
+                            .id(answers.getId())
+                            .orderNo(answers.getOrderNo())
+                            .description(answers.getDescription())
+                            .build();
+                    optionDetailsResponseDtos.add(tempAnswer);
+                }
+
+                QuestionDetailResponseDto tempQuestion = QuestionDetailResponseDto.builder()
+                        .id(question.getId())
+                        .orderNo(question.getOrderNo())
+                        .title(question.getTitle())
+                        .text(question.getText())
+                        .type(question.getType())
+                        .options(optionDetailsResponseDtos)
+                        .build();
+
+                questionDetailResponseDtos.add(tempQuestion);
+            }
+
+            templateDetailsResponseDto = TemplateDetailsResponseDto.builder()
+                    .id(template.getId())
+                    .templateName(template.getTemplateCode())
+                    .version(template.getVersion())
+                    .explanation(template.getExplanation())
+                    .validityStartDate(template.getValidityStartDate())
+                    .validityEndDate(template.getValidityEndDate())
+                    .isDraft(template.isDraft())
+                    .questions(questionDetailResponseDtos)
+                    .build();
+
+            return templateDetailsResponseDto;
+        }
+        else {
+            return new TemplateDetailsResponseDto();
+        }
     }
 }

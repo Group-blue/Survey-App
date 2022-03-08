@@ -2,6 +2,7 @@ package com.bilgeadam.controller;
 
 import com.bilgeadam.dto.request.SaveTemplateRequestDto;
 import com.bilgeadam.dto.response.ListAllTemplateResponseDto;
+import com.bilgeadam.dto.response.TemplateDetailsResponseDto;
 import com.bilgeadam.service.SurveyTemplateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +29,11 @@ public class SurveyTemplateController {
 
     @GetMapping("/listalltemplates")
     public ResponseEntity<List<ListAllTemplateResponseDto>> listAllTemplates(){
-    return ResponseEntity.ok(surveyTemplateService.listAllTemplates());
+        return ResponseEntity.ok(surveyTemplateService.listAllTemplates());
     }
 
-//    public ResponseEntity<dto> findTemplateById(@RequestParam long id){
-//
-//        return ResponseEntity.ok(dto);
-//    }
+    @GetMapping("/findtemplatebyid")
+    public ResponseEntity<TemplateDetailsResponseDto> findTemplateById(@RequestParam long id){
+        return ResponseEntity.ok(surveyTemplateService.getTemplateDetailsById(id));
+    }
 }
