@@ -1,11 +1,15 @@
 package com.bilgeadam.repository.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 
 @Getter
 @Setter

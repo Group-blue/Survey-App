@@ -16,16 +16,16 @@ public class Question {
     @SequenceGenerator(name = "sq_question_id", sequenceName = "sq_question_id", allocationSize = 1, initialValue = 1)
     @GeneratedValue(generator = "sq_question_id")
     private long id;
-    private String questionText;
-    private String explanation;
+    private int orderNo;
+    private String title;
+    private String text;
+    private boolean isOptional;
+    private int type;
 
     @ManyToOne
     @JoinColumn(name = "question_category_id")
     private QuestionCategory questionCategory;
 
-    @ManyToOne
-    @JoinColumn(name = "question_type_id")
-    private QuestionType questionType;
 
     @ManyToMany(mappedBy = "questions")
     private Set<SurveyTemplate> surveyTemplates;
