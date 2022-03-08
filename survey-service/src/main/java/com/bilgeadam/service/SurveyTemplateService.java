@@ -140,4 +140,42 @@ public class SurveyTemplateService {
             return new TemplateDetailsResponseDto();
         }
     }
+    public boolean updateTemplate(TemplateDetailsResponseDto dtoFromUser) {
+        List<Question> questions = new ArrayList<>();
+        for (QuestionDetailResponseDto questionDto: dtoFromUser.getQuestions()){
+           Question tempQuestion = mapper.mapQuestionDetailResponseDtoToQuestion(questionDto);
+            if (!questionDto.getOptions().isEmpty()){
+                Set<PossibleAnswers> possibleAnswersList = possibleAnswersService.mapOptionDetailResponseDtoToPossibleAnswers(questionDto.getOptions());
+                for(PossibleAnswers possibleAnswer : possibleAnswersList){
+                    possibleAnswer.setQuestion(tempQuestion);
+                }
+                tempQuestion.setPossibleAnswers(possibleAnswersList);
+            }
+            questions.add(tempQuestion);
+        }
+        List<Question> questionsFromDb = questionService.saveList(questions);
+        for(Question question: questionsFromDb){
+            possibleAnswersService.saveList(new ArrayList<>(question.getPossibleAnswers()));
+        }
+        SurveyTemplate surveyTemplate;
+        if (!dtoFromUser.isDraft()){
+            surveyTemplate = SurveyTemplate.builder().templateCode(dtoFromUser.getTemplateName())
+                    .id(dtoFromUser.getId())
+                    .version(1L)
+                    .explanation(dtoFromUser.getExplanation())
+                    .validityStartDate(new Date().getTime())
+                    .isDraft(dtoFromUser.isDraft())
+                    .questions(Set.copyOf(questionsFromDb))
+                    .build();
+        } else {
+            surveyTemplate = SurveyTemplate.builder().templateCode(dtoFromUser.getTemplateName())
+                    .id(dtoFromUser.getId())
+                    .explanation(dtoFromUser.getExplanation())
+                    .isDraft(dtoFromUser.isDraft())
+                    .questions(Set.copyOf(questionsFromDb))
+                    .build();
+        }
+        surveyTemlateRepository.save(surveyTemplate);
+        return true;
+    }
 }

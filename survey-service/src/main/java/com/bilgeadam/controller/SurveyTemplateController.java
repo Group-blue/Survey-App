@@ -36,4 +36,9 @@ public class SurveyTemplateController {
     public ResponseEntity<TemplateDetailsResponseDto> findTemplateById(@RequestParam long id){
         return ResponseEntity.ok(surveyTemplateService.getTemplateDetailsById(id));
     }
+
+    @PostMapping("/updatetemplate")
+    public ResponseEntity<Boolean> updateTemplate(@RequestBody TemplateDetailsResponseDto dto){
+        return ResponseEntity.ok(surveyTemplateService.updateTemplate(dto));
+    }
 }
