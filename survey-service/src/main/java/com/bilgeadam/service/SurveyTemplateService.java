@@ -140,6 +140,7 @@ public class SurveyTemplateService {
             return new TemplateDetailsResponseDto();
         }
     }
+    @Transactional
     public boolean updateTemplate(TemplateDetailsResponseDto dtoFromUser) {
         List<Question> questions = new ArrayList<>();
         for (QuestionDetailResponseDto questionDto: dtoFromUser.getQuestions()){

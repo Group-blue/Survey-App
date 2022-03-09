@@ -41,4 +41,5 @@ public class SurveyTemplateController {
     public ResponseEntity<Boolean> updateTemplate(@RequestBody TemplateDetailsResponseDto dto){
         return ResponseEntity.ok(surveyTemplateService.updateTemplate(dto));
     }
+
 }
