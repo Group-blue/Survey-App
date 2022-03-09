@@ -140,11 +140,11 @@ public class SurveyTemplateService {
             return new TemplateDetailsResponseDto();
         }
     }
-
+    @Transactional
     public boolean updateTemplate(TemplateDetailsResponseDto dtoFromUser) {
         List<Question> questions = new ArrayList<>();
         for (QuestionDetailResponseDto questionDto: dtoFromUser.getQuestions()){
-            Question tempQuestion = mapper.mapQuestionDetailResponseDtoToQuestion(questionDto);
+           Question tempQuestion = mapper.mapQuestionDetailResponseDtoToQuestion(questionDto);
             if (!questionDto.getOptions().isEmpty()){
                 Set<PossibleAnswers> possibleAnswersList = possibleAnswersService.mapOptionDetailResponseDtoToPossibleAnswers(questionDto.getOptions());
                 for(PossibleAnswers possibleAnswer : possibleAnswersList){
