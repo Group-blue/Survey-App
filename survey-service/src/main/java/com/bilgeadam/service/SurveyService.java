@@ -1,7 +1,10 @@
 package com.bilgeadam.service;
 
 import com.bilgeadam.dto.request.SaveSurveyRequestDto;
+import com.bilgeadam.dto.response.CourseBasicResponseDto;
 import com.bilgeadam.dto.response.ListAllSurveyResponseDto;
+import com.bilgeadam.dto.response.SurveyDetailResponseDto;
+import com.bilgeadam.mapper.CourseMapper;
 import com.bilgeadam.repository.ISurveyRepository;
 import com.bilgeadam.repository.ISurveyTemlateRepository;
 import com.bilgeadam.repository.entity.Survey;
@@ -16,10 +19,12 @@ import java.util.Optional;
 public class SurveyService {
     private final ISurveyRepository surveyRepository;
     private final ISurveyTemlateRepository surveyTemlateRepository;
+    private final CourseMapper courseMapper;
 
-    public SurveyService(ISurveyRepository surveyRepository, ISurveyTemlateRepository surveyTemlateRepository) {
+    public SurveyService(ISurveyRepository surveyRepository, ISurveyTemlateRepository surveyTemlateRepository, CourseMapper courseMapper) {
         this.surveyRepository = surveyRepository;
         this.surveyTemlateRepository = surveyTemlateRepository;
+        this.courseMapper = courseMapper;
     }
 
     public void save(Survey survey){
@@ -58,6 +63,27 @@ public class SurveyService {
             return true;
         }else{
             return false;
+        }
+    }
+    public SurveyDetailResponseDto findSurveyById(long surveyId){
+
+        Optional<Survey> surveyOptional = surveyRepository.findById(surveyId);
+        SurveyDetailResponseDto surveyDetailResponseDto;
+        if (surveyOptional.isPresent()){
+            Survey survey = surveyOptional.get();
+
+            CourseBasicResponseDto courseBasicResponseDto = courseMapper.mapCoursetoDto(survey.getCourse());
+
+            surveyDetailResponseDto = SurveyDetailResponseDto.builder()
+                    .templateId(survey.getSurveyTemplate().getId())
+                    .sequenceNumber(survey.getSequenceNumber())
+                    .startDate(survey.getStartDate())
+                    .endDate(survey.getEndDate())
+                    .dto(courseBasicResponseDto)
+                    .build();
+            return surveyDetailResponseDto;
+        }else {
+            return new SurveyDetailResponseDto();
         }
     }
 }

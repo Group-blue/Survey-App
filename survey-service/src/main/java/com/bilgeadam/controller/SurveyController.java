@@ -2,6 +2,7 @@ package com.bilgeadam.controller;
 
 import com.bilgeadam.dto.request.SaveSurveyRequestDto;
 import com.bilgeadam.dto.response.ListAllSurveyResponseDto;
+import com.bilgeadam.dto.response.SurveyDetailResponseDto;
 import com.bilgeadam.repository.entity.Survey;
 import com.bilgeadam.service.SurveyService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +32,8 @@ public class SurveyController {
         return ResponseEntity.ok(surveyService.listAllSurveys());
     }
 
-//    @GetMapping("/findsurveybyid")
-//    public ResponseEntity<SurveyDetailResponseDto> findSurveyById(@RequestParam long id){
-//        return ResponseEntity.ok(surveyService.findById(id));
-//    }
+    @GetMapping("/findsurveybyid")
+    public ResponseEntity<SurveyDetailResponseDto> findSurveyById(@RequestParam long id){
+        return ResponseEntity.ok(surveyService.findSurveyById(id));
+    }
 }
