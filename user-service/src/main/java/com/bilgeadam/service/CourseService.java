@@ -19,8 +19,8 @@ public class CourseService {
         this.mapper = mapper;
     }
     public Course save(CourseRequestDto dto) {
-        Teacher masterTrainer=Teacher.builder().teacherId(dto.getMasterTrainer().getTeacherId()).build();
-        Teacher assistantTrainer=Teacher.builder().teacherId(dto.getAssistantTrainer().getTeacherId()).build();
+        Teacher masterTrainer=Teacher.builder().id(dto.getMasterTrainer().getId()).build();
+        Teacher assistantTrainer=Teacher.builder().id(dto.getAssistantTrainer().getId()).build();
         Branch branch =Branch.builder().id(dto.getBranch().getId()).build();
         Course course=Course.builder().courseCode(dto.getCourseCode()).name(dto.getName())
                 .startDate(dto.getStartDate()).endDate(dto.getEndDate()).masterTrainer(masterTrainer).

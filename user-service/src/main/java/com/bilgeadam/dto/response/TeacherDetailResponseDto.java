@@ -1,6 +1,8 @@
-package com.bilgeadam.dto.request;
+package com.bilgeadam.dto.response;
 
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -8,8 +10,10 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TeacherRequestDto {
+public class TeacherDetailResponseDto {
     private long id;
+    private long teacherId;
+    private long employeeId;
     private long idNumber;
     private String firstname;
     private String lastname;
@@ -18,6 +22,9 @@ public class TeacherRequestDto {
     private String district;
     private String phone1;
     private String phone2;
-
+    private int yearsOfexperience;
+    List<CourseBasicResponseDto> masterCourses;
+    List<CourseBasicResponseDto> assistantCourses;
+    List<TopicResponseDto> topics;
 
 }
