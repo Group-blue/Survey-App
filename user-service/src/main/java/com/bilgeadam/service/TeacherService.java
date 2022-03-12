@@ -6,7 +6,9 @@ import com.bilgeadam.dto.response.TeacherDetailResponseDto;
 import com.bilgeadam.dto.response.TeacherResponseDto;
 import com.bilgeadam.dto.response.TopicResponseDto;
 import com.bilgeadam.mapper.UserServiceMapper;
+import com.bilgeadam.repository.ICourseRepository;
 import com.bilgeadam.repository.ITeacherRepository;
+import com.bilgeadam.repository.ITopicRepository;
 import com.bilgeadam.repository.entity.Course;
 import com.bilgeadam.repository.entity.Teacher;
 import com.bilgeadam.repository.entity.Topic;
@@ -17,10 +19,14 @@ import java.util.*;
 @Service
 public class TeacherService {
     ITeacherRepository teacherRepository;
+    ICourseRepository courseRepository;
+    ITopicRepository topicRepository;
     UserServiceMapper mapper;
 
-    public TeacherService(ITeacherRepository teacherRepository, UserServiceMapper mapper) {
+    public TeacherService(ITeacherRepository teacherRepository, ICourseRepository courseRepository, ITopicRepository topicRepository, UserServiceMapper mapper) {
         this.teacherRepository = teacherRepository;
+        this.courseRepository = courseRepository;
+        this.topicRepository = topicRepository;
         this.mapper = mapper;
     }
 
@@ -85,15 +91,18 @@ public class TeacherService {
 
         for (CourseBasicResponseDto courseBasicResponseDto:dto.getMasterCourses()
              ) {
-            masterCourses.add(Course.builder().id(courseBasicResponseDto.getId()).build());
+            Course course=courseRepository.findById(courseBasicResponseDto.getId()).get();
+            masterCourses.add(course);
         }
         for (CourseBasicResponseDto courseBasicResponseDto:dto.getAssistantCourses()
              ) {
-            assistantCourses.add(Course.builder().id(courseBasicResponseDto.getId()).build());
+            Course course=courseRepository.findById(courseBasicResponseDto.getId()).get();
+            assistantCourses.add(course);
         }
         for (TopicResponseDto topicResponseDto:dto.getTopics()
              ) {
-            topics.add(Topic.builder().id(topicResponseDto.getId()).build());
+            Topic topic=topicRepository.findById(topicResponseDto.getId()).get();
+            topics.add(topic);
         }
 
         Teacher teacher=Teacher.builder().id(dto.getId()).teacherId(dto.getId()).employeeId(dto.getTeacherId())
@@ -101,7 +110,26 @@ public class TeacherService {
                 .address(dto.getAddress()).province(dto.getProvince()).district(dto.getDistrict()).phone1(dto.getPhone1())
                 .phone2(dto.getPhone2()).yearsOfexperience(dto.getYearsOfexperience()).masterCourses(masterCourses)
                 .assistanCourses(assistantCourses).topics(topics).build();
-        teacherRepository.save(teacher);
+       Teacher teacherDb=teacherRepository.save(teacher);
+
+        for (CourseBasicResponseDto courseBasicResponseDto:dto.getMasterCourses()
+        ) {
+            Course course=courseRepository.findById(courseBasicResponseDto.getId()).get();
+            course.setMasterTrainer(teacherDb);
+            courseRepository.save(course);
+        }
+        for (CourseBasicResponseDto courseBasicResponseDto:dto.getAssistantCourses()
+        ) {
+            Course course=courseRepository.findById(courseBasicResponseDto.getId()).get();
+            course.setAssistantTrainer(teacherDb);
+            courseRepository.save(course);
+        }
+        for (TopicResponseDto topicResponseDto:dto.getTopics()
+        ) {
+            Topic topic=topicRepository.findById(topicResponseDto.getId()).get();
+            topic.getTeachers().add(teacherDb);
+            topicRepository.save(topic);
+        }
 
         return true;
     }

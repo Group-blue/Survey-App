@@ -11,4 +11,9 @@ import lombok.*;
 public class BranchResponseDto {
     private long id;
     private String name;
+    private String address;
+    private String province;
+    private String district;
+    private EmployeeResponseDto manager;
+
 }

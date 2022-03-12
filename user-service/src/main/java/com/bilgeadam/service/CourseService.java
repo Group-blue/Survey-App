@@ -3,7 +3,7 @@ package com.bilgeadam.service;
 import com.bilgeadam.dto.request.CourseRequestDto;
 import com.bilgeadam.dto.response.*;
 import com.bilgeadam.mapper.UserServiceMapper;
-import com.bilgeadam.repository.ICourseRepository;
+import com.bilgeadam.repository.*;
 import com.bilgeadam.repository.entity.*;
 import org.springframework.stereotype.Service;
 
@@ -12,20 +12,31 @@ import java.util.*;
 @Service
 public class CourseService {
     private final ICourseRepository courseRepository;
+    private final ITeacherRepository teacherRepository;
+    private final IBranchRepository branchRepository;
+    private final IStudentRepository studentRepository;
+    private final ISurveyRepository surveyRepository;
     private final UserServiceMapper mapper;
 
-    public CourseService(ICourseRepository courseRepository, UserServiceMapper mapper) {
+    public CourseService(ICourseRepository courseRepository, ITeacherRepository teacherRepository, IBranchRepository branchRepository, IStudentRepository studentRepository, ISurveyRepository surveyRepository, UserServiceMapper mapper) {
         this.courseRepository = courseRepository;
+        this.teacherRepository = teacherRepository;
+        this.branchRepository = branchRepository;
+        this.studentRepository = studentRepository;
+        this.surveyRepository = surveyRepository;
         this.mapper = mapper;
     }
+
     public Course save(CourseRequestDto dto) {
-        Teacher masterTrainer=Teacher.builder().id(dto.getMasterTrainer().getId()).build();
-        Teacher assistantTrainer=Teacher.builder().id(dto.getAssistantTrainer().getId()).build();
-        Branch branch =Branch.builder().id(dto.getBranch().getId()).build();
+        Teacher masterTrainer=teacherRepository.findById(dto.getMasterTrainer().getId()).get();
+        Teacher assistantTrainer=teacherRepository.findById(dto.getAssistantTrainer().getId()).get();
+        Branch branch =branchRepository.findById(dto.getBranch().getId()).get();
         Course course=Course.builder().courseCode(dto.getCourseCode()).name(dto.getName())
                 .startDate(dto.getStartDate()).endDate(dto.getEndDate()).masterTrainer(masterTrainer).
                 assistantTrainer(assistantTrainer).branch(branch).build();
-        return courseRepository.save(course);
+        Course courseDb=courseRepository.save(course);
+
+        return courseDb;
 //        private String courseCode;
 //        private String name;
 //        private long startDate;
@@ -78,7 +89,7 @@ public class CourseService {
             CourseDetailResponseDto courseDetailResponseDto=CourseDetailResponseDto.builder().courseCode(course.getCourseCode())
                     .name(course.getName()).startDate(course.getStartDate()).endDate(course.getEndDate()).masterTrainer(masterTrainerResponseDto)
                     .assistantTrainer(assistantTrainerResponseDto).students(studentResponseDtoList).surveys(surveyResponseDtoList).id(course.getId())
-                    .build();
+                    .branch(branchResponseDto).build();
             return courseDetailResponseDto;
 
         }else {
@@ -87,28 +98,35 @@ public class CourseService {
     }
 
     public boolean updateCourse(CourseDetailResponseDto dto){
-        Teacher masterTrainer=Teacher.builder().id(dto.getMasterTrainer().getId()).teacherId(dto.getMasterTrainer().getTeacherId())
-                .employeeId(dto.getMasterTrainer().getEmployeeId()).build();
-        Teacher assistantTrainer=Teacher.builder().id(dto.getAssistantTrainer().getId()).teacherId(dto.getAssistantTrainer().getTeacherId())
-                .employeeId(dto.getAssistantTrainer().getEmployeeId()).build();
-        Branch branch=Branch.builder().id(dto.getBranch().getId()).build();
+        Teacher masterTrainer=teacherRepository.findById(dto.getMasterTrainer().getId()).get();
+        Teacher assistantTrainer=teacherRepository.findById(dto.getAssistantTrainer().getId()).get();
+        Branch branch =branchRepository.findById(dto.getBranch().getId()).get();
         Set<Student>studentSet=new HashSet<>();
         Set<Survey>surveySet=new HashSet<>();
         for (StudentResponseDto studentResponseDto: dto.getStudents()) {
-            Student student=Student.builder().id(studentResponseDto.getId()).idNumber(studentResponseDto.getIdNumber())
-                    .firstname(studentResponseDto.getFirstname()).lastname(studentResponseDto.getLastname())
-                    .province(studentResponseDto.getProvince()).build();
+            Student student=studentRepository.findById(studentResponseDto.getId()).get();
             studentSet.add(student);
         }
         for (SurveyResponseDto surveyResponseDto:dto.getSurveys()) {
-            Survey survey=Survey.builder().id(surveyResponseDto.getId()).build();
+            Survey survey=surveyRepository.findById(surveyResponseDto.getId()).get();
             surveySet.add(survey);
         }
         Course course=Course.builder().id(dto.getId()).courseCode(dto.getCourseCode()).name(dto.getName())
                 .startDate(dto.getStartDate()).endDate(dto.getEndDate()).masterTrainer(masterTrainer)
                 .assistantTrainer(assistantTrainer).branch(branch).students(studentSet).surveys(surveySet).build();
 
-        courseRepository.save(course);
+        Course courseDb=courseRepository.save(course);
+        for (StudentResponseDto studentResponseDto: dto.getStudents()) {
+            Student student=studentRepository.findById(studentResponseDto.getId()).get();
+            student.getCourses().add(courseDb);
+            studentRepository.save(student);
+        }
+
+        for (SurveyResponseDto surveyResponseDto:dto.getSurveys()) {
+            Survey survey=surveyRepository.findById(surveyResponseDto.getId()).get();
+            survey.setCourse(courseDb);
+            surveyRepository.save(survey);
+        }
         return true;
     }
 

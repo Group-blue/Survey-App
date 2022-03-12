@@ -5,6 +5,7 @@ import com.bilgeadam.dto.response.CourseBasicResponseDto;
 import com.bilgeadam.dto.response.StudentDetailsResponseDto;
 import com.bilgeadam.dto.response.StudentResponseDto;
 import com.bilgeadam.mapper.UserServiceMapper;
+import com.bilgeadam.repository.ICourseRepository;
 import com.bilgeadam.repository.IStudentRepository;
 import com.bilgeadam.repository.entity.Course;
 import com.bilgeadam.repository.entity.Student;
@@ -16,10 +17,12 @@ import java.util.*;
 public class StudentService {
     private final IStudentRepository studentRepository;
     private final UserServiceMapper mapper;
+    private final ICourseRepository courseRepository;
 
-    public StudentService(IStudentRepository studentRepository, UserServiceMapper mapper) {
+    public StudentService(IStudentRepository studentRepository, UserServiceMapper mapper, ICourseRepository courseRepository) {
         this.studentRepository = studentRepository;
         this.mapper = mapper;
+        this.courseRepository = courseRepository;
     }
 
     public Student save(StudentRequestDto studentRequestDto) {
@@ -43,17 +46,23 @@ public class StudentService {
 
     public boolean updateStudent(StudentDetailsResponseDto dto) {
         Set<Course> courses = new HashSet<>();
+
         for (CourseBasicResponseDto courseBasicResponseDto : dto.getCourses()) {
-            Course course=Course.builder().id(courseBasicResponseDto.getId()).build();
+            Course course=courseRepository.findById(courseBasicResponseDto.getId()).get();
             courses.add(course);
+
         }
        Student student= Student.builder().id(dto.getId()).idNumber(dto.getIdNumber()).firstname(dto.getFirstname())
                 .lastname(dto.getLastname()).address(dto.getAddress()).province(dto.getProvince())
                 .district(dto.getDistrict()).phone1(dto.getPhone1()).phone2(dto.getPhone2())
-                .registrationId(dto.getRegistrationId()).registrationDate(dto.getRegistrationDate())
-                .courses(courses).build();
+                .courses(courses).email(dto.getEmail()).password(dto.getPassword()).build();
+        Student student1=studentRepository.save(student);
+        for (CourseBasicResponseDto courseBasicResponseDto : dto.getCourses()) {
+            Course course=courseRepository.findById(courseBasicResponseDto.getId()).get();
+            course.getStudents().add(student1);
+            courseRepository.save(course);
 
-        studentRepository.save(student);
+        }
         return true;
 
 
@@ -81,7 +90,7 @@ public class StudentService {
                             address(student.getAddress()).province(student.getProvince()).
                             district(student.getDistrict()).phone1(student.getPhone1()).phone2(student.getPhone2())
                             .registrationId(student.getRegistrationId()).registrationDate(student.getRegistrationDate())
-                            .courses(courseBasicResponseDtoList).build();
+                            .courses(courseBasicResponseDtoList).email(student.getEmail()).build();
             return studentDetailsResponseDto;
         } else {
 
