@@ -12,6 +12,7 @@ public class TeacherResponseDto {
     private long id;
     private long teacherId;
     private long employeeId;
+    private String email;
     private String firstname;
     private String lastname;
 }

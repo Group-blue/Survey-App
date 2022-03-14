@@ -8,13 +8,18 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class StudentResponseDto {
+public class EmployeeResponseDto {
     private long id;
     private long idNumber;
+    private long employeeId;
     private String email;
+    private String password;
     private String firstname;
     private String lastname;
+    private String address;
     private String province;
-
+    private String district;
+    private String phone1;
+    private String phone2;
 
 }

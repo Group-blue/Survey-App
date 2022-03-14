@@ -21,6 +21,8 @@ public abstract class Person {
     @GeneratedValue(generator = "sq_person_id")
     private long id;
     private long idNumber;
+    private String email;
+    private String password;
     private String firstname;
     private String lastname;
     private String address;

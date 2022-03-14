@@ -15,6 +15,8 @@ public class TeacherDetailResponseDto {
     private long teacherId;
     private long employeeId;
     private long idNumber;
+    private String email;
+    private String password;
     private String firstname;
     private String lastname;
     private String address;
