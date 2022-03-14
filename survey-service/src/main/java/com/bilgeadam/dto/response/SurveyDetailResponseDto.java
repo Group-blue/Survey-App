@@ -17,6 +17,6 @@ private long templateId;
 private long sequenceNumber;
 private long startDate;
 private long endDate;
-private CourseBasicResponseDto dto;
+private CourseBasicResponseDto courseBasicResponseDto;
 
 }
