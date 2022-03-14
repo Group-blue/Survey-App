@@ -47,6 +47,8 @@ allprojects {
         implementation      libs.springActuator
         implementation      libs.postgresql
         implementation      libs.springDataJpa
+        implementation      libs.springSecurity
+        implementation      libs.auth0Jwt
     }
 }
 configurations {
