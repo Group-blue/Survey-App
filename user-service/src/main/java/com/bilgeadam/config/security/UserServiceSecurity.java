@@ -24,7 +24,7 @@ public class UserServiceSecurity extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/v3/api-docs/**",
                         "/swagger-ui/**",
                         "/auth/login").permitAll()
-                .anyRequest().authenticated();
+                        .anyRequest().authenticated();
 
         http.addFilterBefore(getJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }

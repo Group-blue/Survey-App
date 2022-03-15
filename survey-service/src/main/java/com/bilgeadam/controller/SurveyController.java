@@ -24,7 +24,24 @@ public class SurveyController {
 
     @PostMapping("/save")
     public ResponseEntity<Boolean> saveSurvey(@RequestBody SaveSurveyRequestDto dto){
-        return ResponseEntity.ok(surveyService.saveSurvey(dto));
+        long surveyId = surveyService.saveSurvey(dto);
+        if (surveyId>0){
+            surveyService.sendMailToUsers(dto.getCourseId(), surveyId);
+            return ResponseEntity.ok(true);
+        }
+        else {
+            return ResponseEntity.ok(false);
+        }
+    }
+
+    @GetMapping("/getsurveybytoken")
+    public ResponseEntity<Void> getStudentSurveyByToken(@RequestParam String token){
+        // token valid mi kontrolü yapılacak ?
+        // alınan tokenın içindeki studentid ve survey id ayıklanacak
+        // ilgili id ye sahip survey öğrenciye atanmış mı kontrolü yapılacak ?
+        // => survey hangi kursa atanmış => student id li öğrenc, bu kursa kayıtlıysa ok bu surveyi görebilir.
+        // kullanıcıya survey detayları dönülecek (studentId, surveyId, templateId, sorular(idleri ile birlikte) ve optionlar(idleri ile birlikte) )
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/listallsurveys")

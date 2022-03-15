@@ -5,6 +5,7 @@ import com.bilgeadam.dto.response.CourseBasicResponseDto;
 import com.bilgeadam.dto.response.StudentDetailsResponseDto;
 import com.bilgeadam.dto.response.StudentResponseDto;
 import com.bilgeadam.mapper.UserServiceMapper;
+import com.bilgeadam.rabbitmq.model.MailNotification;
 import com.bilgeadam.repository.ICourseRepository;
 import com.bilgeadam.repository.IStudentRepository;
 import com.bilgeadam.repository.entity.Course;
@@ -96,5 +97,12 @@ public class StudentService {
 
             return new StudentDetailsResponseDto();
         }
+    }
+
+    public void createTokensAndMailToUsers(MailNotification notification){
+        // gelen kurs id sine göre o kursa kayıtlı öğrenciler listesini çekecek
+        // survey id notification içinde var
+        // her öğrenci için içinde surveyid ve öğrenci id olan bir token üretecek
+        // şimdilik loglara basacak bu tokenları.
     }
 }

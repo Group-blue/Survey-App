@@ -4,6 +4,8 @@ import com.bilgeadam.dto.request.SaveSurveyRequestDto;
 import com.bilgeadam.dto.response.CourseBasicResponseDto;
 import com.bilgeadam.dto.response.ListAllSurveyResponseDto;
 import com.bilgeadam.dto.response.SurveyDetailResponseDto;
+import com.bilgeadam.rabbitmq.model.MailNotification;
+import com.bilgeadam.rabbitmq.producer.SendMailToUsersProducer;
 import com.bilgeadam.repository.ISurveyRepository;
 import com.bilgeadam.repository.ISurveyTemlateRepository;
 import com.bilgeadam.repository.entity.Survey;
@@ -18,14 +20,16 @@ import java.util.Optional;
 public class SurveyService {
     private final ISurveyRepository surveyRepository;
     private final ISurveyTemlateRepository surveyTemlateRepository;
+    private final SendMailToUsersProducer producer;
 
-    public SurveyService(ISurveyRepository surveyRepository, ISurveyTemlateRepository surveyTemlateRepository) {
+    public SurveyService(ISurveyRepository surveyRepository, ISurveyTemlateRepository surveyTemlateRepository, SendMailToUsersProducer producer) {
         this.surveyRepository = surveyRepository;
         this.surveyTemlateRepository = surveyTemlateRepository;
+        this.producer = producer;
     }
 
-    public void save(Survey survey){
-        surveyRepository.save(survey);
+    public Survey save(Survey survey){
+        return surveyRepository.save(survey);
     }
 
     public List<ListAllSurveyResponseDto> listAllSurveys(){
@@ -45,7 +49,7 @@ public class SurveyService {
     }
 
 
-    public boolean saveSurvey(SaveSurveyRequestDto saveSurveyRequestDto){
+    public long saveSurvey(SaveSurveyRequestDto saveSurveyRequestDto){
         Optional<SurveyTemplate> surveyTemplate = surveyTemlateRepository.findById(saveSurveyRequestDto.getTemplateId());
         if(surveyTemplate.isPresent()) {
             SurveyTemplate tempSurveyTemplate = surveyTemplate.get();
@@ -56,10 +60,10 @@ public class SurveyService {
                     .endDate(saveSurveyRequestDto.getEndDate())
                     .surveyTemplate(tempSurveyTemplate)
                     .build();
-            save(survey);
-            return true;
+            Survey surveyFromDb = save(survey);
+            return surveyFromDb.getId();
         }else{
-            return false;
+            return -1;
         }
     }
     public SurveyDetailResponseDto findSurveyById(long surveyId){
@@ -85,5 +89,10 @@ public class SurveyService {
         }else {
             return new SurveyDetailResponseDto();
         }
+    }
+
+    public void sendMailToUsers(long courseId, long surveyId){
+        MailNotification notification = MailNotification.builder().surveyId(surveyId).courseId(courseId).build();
+        producer.sendNotificationUserServiceForMails(notification);
     }
 }
