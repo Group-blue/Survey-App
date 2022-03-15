@@ -23,3 +23,6 @@ spring:
     base-url: ${SURVEYAPP_TOOLS_LOADBALANCER_IP_HTTP}:${SURVEYAPP_TOOLS_ZIPKIN_PORT}
     service:
       name: reporting-service
+
+surveyapp:
+  secretkey: ${SURVEYAPP_SECRET_CODE}
