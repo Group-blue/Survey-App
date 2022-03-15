@@ -4,6 +4,7 @@ import com.bilgeadam.dto.request.TeacherRequestDto;
 import com.bilgeadam.dto.response.TeacherDetailResponseDto;
 import com.bilgeadam.dto.response.TeacherResponseDto;
 import com.bilgeadam.service.TeacherService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import java.util.List;
 @Slf4j
 @CrossOrigin(origins = "*")
 @RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/teacher")
 public class TeacherController {
     private final TeacherService teacherService;

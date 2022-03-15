@@ -4,6 +4,7 @@ import com.bilgeadam.dto.request.SaveTemplateRequestDto;
 import com.bilgeadam.dto.response.ListAllTemplateResponseDto;
 import com.bilgeadam.dto.response.TemplateDetailsResponseDto;
 import com.bilgeadam.service.SurveyTemplateService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import java.util.List;
 @Slf4j
 @CrossOrigin(origins = "*")
 @RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/surveytemplate")
 public class SurveyTemplateController {
     private final SurveyTemplateService surveyTemplateService;

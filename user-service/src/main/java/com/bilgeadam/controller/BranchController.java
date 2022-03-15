@@ -6,6 +6,7 @@ import com.bilgeadam.dto.response.BranchResponseDto;
 import com.bilgeadam.dto.response.CourseDetailResponseDto;
 import com.bilgeadam.dto.response.CourseResponseDto;
 import com.bilgeadam.service.BranchService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.List;
 @Slf4j
 @CrossOrigin(origins = "*")
 @RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/branch")
 public class BranchController {
     private final BranchService branchService;
