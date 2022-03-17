@@ -19,6 +19,5 @@ public class TemplateDetailsResponseDto {
     private long validityEndDate;
     private boolean isDraft;
 
-
     private Set<QuestionDetailResponseDto> questions;
 }
