@@ -128,7 +128,7 @@ public class SurveyService {
 
                     TemplateDetailsResponseDto templateDetailsResponseDto = surveyTemplateService.getTemplateDetailsById(survey.getSurveyTemplate().getId());
                     studentSurveyResponseDto = StudentSurveyResponseDto.builder().surveyTemplate(templateDetailsResponseDto)
-                            .studentId(student.getId()).build();
+                            .studentId(student.getId()).surveyId(survey.getId()).status(200).build();
                     return studentSurveyResponseDto;
                 }
             }
@@ -137,6 +137,6 @@ public class SurveyService {
             // => survey hangi kursa atanmış => student id li öğrenc, bu kursa kayıtlıysa ok bu surveyi görebilir.
             // kullanıcıya survey detayları dönülecek (studentId, surveyId, templateId, sorular(idleri ile birlikte) ve optionlar(idleri ile birlikte) )
         }
-        return StudentSurveyResponseDto.builder().build();
+        return StudentSurveyResponseDto.builder().status(404).build();
     }
 }

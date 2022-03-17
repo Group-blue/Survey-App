@@ -49,13 +49,13 @@ public class BranchService {
         Optional<Branch> branchDb = branchRepository.findById(id);
         if (branchDb.isPresent()) {
             Branch branch = branchDb.get();
-            BranchResponseDto dto = BranchResponseDto.builder().id(branch.getId()).name(branch.getName()).address(branch.getAddress())
-                    .province(branch.getProvince()).district(branch.getDistrict())
-                    .manager(mapper.mapEmployeetoDto(branch.getManager())).build();
             for (Course course:branch.getCourses()
                  ) {
                 log.info(course.getName());
             }
+            BranchResponseDto dto = BranchResponseDto.builder().id(branch.getId()).name(branch.getName()).address(branch.getAddress())
+                    .province(branch.getProvince()).district(branch.getDistrict())
+                    .manager(mapper.mapEmployeetoDto(branch.getManager())).build();
             return dto;
         }
         return new BranchResponseDto();

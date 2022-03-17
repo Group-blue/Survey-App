@@ -10,6 +10,8 @@ import lombok.*;
 @Builder
 public class StudentSurveyResponseDto {
     private long studentId;
+    private long surveyId;
+    private long status;
     private TemplateDetailsResponseDto surveyTemplate;
 
 }

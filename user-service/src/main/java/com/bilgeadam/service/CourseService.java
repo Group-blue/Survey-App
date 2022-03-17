@@ -16,14 +16,16 @@ public class CourseService {
     private final IBranchRepository branchRepository;
     private final IStudentRepository studentRepository;
     private final ISurveyRepository surveyRepository;
+    private final BranchService branchService;
     private final UserServiceMapper mapper;
 
-    public CourseService(ICourseRepository courseRepository, ITeacherRepository teacherRepository, IBranchRepository branchRepository, IStudentRepository studentRepository, ISurveyRepository surveyRepository, UserServiceMapper mapper) {
+    public CourseService(ICourseRepository courseRepository, ITeacherRepository teacherRepository, IBranchRepository branchRepository, IStudentRepository studentRepository, ISurveyRepository surveyRepository, BranchService branchService, UserServiceMapper mapper) {
         this.courseRepository = courseRepository;
         this.teacherRepository = teacherRepository;
         this.branchRepository = branchRepository;
         this.studentRepository = studentRepository;
         this.surveyRepository = surveyRepository;
+        this.branchService = branchService;
         this.mapper = mapper;
     }
 
@@ -69,17 +71,19 @@ public class CourseService {
             Course course=dbCourse.get();
             TeacherResponseDto masterTrainerResponseDto=TeacherResponseDto.builder().id(course.getMasterTrainer().getId())
                     .firstname(course.getMasterTrainer().getFirstname()).lastname(course.getMasterTrainer().getLastname())
-                    .employeeId(course.getMasterTrainer().getEmployeeId()).teacherId(course.getMasterTrainer().getTeacherId()).build();
+                    .employeeId(course.getMasterTrainer().getEmployeeId()).teacherId(course.getMasterTrainer().getTeacherId()).
+                    email(course.getMasterTrainer().getEmail()).build();
             TeacherResponseDto assistantTrainerResponseDto=TeacherResponseDto.builder().id(course.getAssistantTrainer().getId())
                     .firstname(course.getAssistantTrainer().getFirstname()).lastname(course.getAssistantTrainer().getLastname())
-                    .employeeId(course.getAssistantTrainer().getEmployeeId()).teacherId(course.getAssistantTrainer().getTeacherId()).build();
-            BranchResponseDto branchResponseDto=BranchResponseDto.builder().id(course.getBranch().getId()).name(course.getBranch().getName()).build();
+                    .employeeId(course.getAssistantTrainer().getEmployeeId()).teacherId(course.getAssistantTrainer().getTeacherId()).
+                    email(course.getAssistantTrainer().getEmail()).build();
+            BranchResponseDto branchResponseDto=branchService.getBranchDetailById(course.getBranch().getId());
             List<StudentResponseDto> studentResponseDtoList=new ArrayList<>();
             List<SurveyResponseDto> surveyResponseDtoList=new ArrayList<>();
             for (Student student:course.getStudents()) {
                 StudentResponseDto dto =StudentResponseDto.builder().id(student.getId()).idNumber(student.getIdNumber())
                         .firstname(student.getFirstname()).lastname(student.getLastname()).province(student.getProvince())
-                        .build();
+                        .email(student.getEmail()).build();
                 studentResponseDtoList.add(dto);
             }
             for (Survey survey:course.getSurveys()) {

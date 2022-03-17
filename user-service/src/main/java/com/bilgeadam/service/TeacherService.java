@@ -76,7 +76,7 @@ public class TeacherService {
                     .firstname(teacher.getFirstname()).lastname(teacher.getLastname()).address(teacher.getAddress())
                     .province(teacher.getProvince()).district(teacher.getDistrict()).phone1(teacher.getPhone1())
                     .phone2(teacher.getPhone2()).yearsOfexperience(teacher.getYearsOfexperience())
-                    .masterCourses(masterCourses).assistantCourses(assistantCourses).topics(topics).build();
+                    .masterCourses(masterCourses).assistantCourses(assistantCourses).topics(topics).email(teacher.getEmail()).build();
             return teacherDetailResponseDto;
         } else {
             return new TeacherDetailResponseDto();
