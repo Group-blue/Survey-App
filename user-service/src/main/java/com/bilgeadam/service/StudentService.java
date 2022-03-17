@@ -15,6 +15,7 @@ import com.bilgeadam.repository.entity.Survey;
 import com.bilgeadam.util.JwtSurveyTokenManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -108,22 +109,23 @@ public class StudentService {
         }
     }
 
+    @Transactional
     public void createTokensAndMailToUsers(MailNotification notification){
-            long courseId = notification.getCourseId();
-            long surveyId = notification.getSurveyId();
-            Optional<Survey> survey = surveyRepository.findById(surveyId);
-            if (survey.isPresent()){
-                long expireAfter = survey.get().getEndDate();
-                Optional<Course> course = courseRepository.findById(courseId);
-                if(course.isPresent()) {
-                    Set<Student> students = course.get().getStudents();
-                    for (Student student : students) {
-                        long id = student.getId();
+        long courseId = notification.getCourseId();
+        long surveyId = notification.getSurveyId();
+        Optional<Survey> survey = surveyRepository.findById(surveyId);
+        if (survey.isPresent()){
+            long expireAfter = survey.get().getEndDate();
+            Optional<Course> course = courseRepository.findById(courseId);
+            if(course.isPresent()) {
+                Set<Student> students = course.get().getStudents();
+                for (Student student : students) {
+                    long id = student.getId();
 
-                        log.info(jwtSurveyTokenManager.createToken(id,surveyId,expireAfter).get());
-                    }
+                    log.info(jwtSurveyTokenManager.createToken(id,surveyId,expireAfter).get());
                 }
             }
+        }
 
         // gelen kurs id sine göre o kursa kayıtlı öğrenciler listesini çekecek
         // survey id notification içinde var

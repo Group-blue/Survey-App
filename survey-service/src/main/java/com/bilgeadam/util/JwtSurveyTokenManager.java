@@ -4,12 +4,14 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class JwtSurveyTokenManager {
 
@@ -50,7 +52,7 @@ public class JwtSurveyTokenManager {
             return false;
         }
     }
-    public Optional<String> getUserId(String token){
+    public Optional<Long> getUserId(String token){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretkey);
             JWTVerifier jwtVerifier =  JWT.require(algorithm)
@@ -58,13 +60,13 @@ public class JwtSurveyTokenManager {
                     .build();
             DecodedJWT decode = jwtVerifier.verify(token);
             if (decode==null) return Optional.empty();
-            String userId = decode.getClaim("userId").asString();
+            long userId = decode.getClaim("userId").asLong();
             return Optional.of(userId);
         }catch (Exception e){
             return Optional.empty();
         }
     }
-    public Optional<String> getSurveyId(String token){
+    public Optional<Long> getSurveyId(String token){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretkey);
             JWTVerifier jwtVerifier =  JWT.require(algorithm)
@@ -72,7 +74,7 @@ public class JwtSurveyTokenManager {
                     .build();
             DecodedJWT decode = jwtVerifier.verify(token);
             if (decode==null) return Optional.empty();
-            String surveyId = decode.getClaim("surveyId").asString();
+            long surveyId = decode.getClaim("surveyId").asLong();
             return Optional.of(surveyId);
         }catch (Exception e){
             return Optional.empty();

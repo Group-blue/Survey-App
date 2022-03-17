@@ -3,6 +3,7 @@ package com.bilgeadam.controller;
 import com.bilgeadam.config.security.JwtTokenManager;
 import com.bilgeadam.dto.request.SaveSurveyRequestDto;
 import com.bilgeadam.dto.response.ListAllSurveyResponseDto;
+import com.bilgeadam.dto.response.StudentSurveyResponseDto;
 import com.bilgeadam.dto.response.SurveyDetailResponseDto;
 import com.bilgeadam.repository.entity.Student;
 import com.bilgeadam.repository.entity.Survey;
@@ -43,10 +44,8 @@ public class SurveyController {
     }
 
     @GetMapping("/getsurveybytoken")
-    public ResponseEntity<Void> getStudentSurveyByToken(@RequestParam String token) {
-        surveyService.getStudentSurveyByToken(token);
-
-        return ResponseEntity.ok().build();
+    public ResponseEntity<StudentSurveyResponseDto> getStudentSurveyByToken(@RequestParam String token) {
+        return ResponseEntity.ok(surveyService.getStudentSurveyByToken(token));
     }
 
     @GetMapping("/listallsurveys")

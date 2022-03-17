@@ -19,6 +19,7 @@ public class MailServiceConsumer {
 
     @RabbitListener(queues = RABBIT_QUENAMEMAILTOUSER)
     public void consumeMailNotification(MailNotification notification){
+        log.info(".............istek geldi......."+notification.toString());
         studentService.createTokensAndMailToUsers(notification);
     }
 

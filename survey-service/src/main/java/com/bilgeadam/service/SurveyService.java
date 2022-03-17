@@ -12,10 +12,13 @@ import com.bilgeadam.repository.entity.Student;
 import com.bilgeadam.repository.entity.Survey;
 import com.bilgeadam.repository.entity.SurveyTemplate;
 import com.bilgeadam.util.JwtSurveyTokenManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+@Slf4j
 @Service
 public class SurveyService {
     private final ISurveyRepository surveyRepository;
@@ -103,43 +106,37 @@ public class SurveyService {
         producer.sendNotificationUserServiceForMails(notification);
     }
 
+    @Transactional
     public StudentSurveyResponseDto getStudentSurveyByToken(String token) {
-        Student student = new Student();
-        Survey survey = new Survey();
-        StudentSurveyResponseDto studentSurveyResponseDto = new StudentSurveyResponseDto();
+        Student student;
+        Survey survey;
+        StudentSurveyResponseDto studentSurveyResponseDto;
 
         // token valid mi kontrolü yapılacak ?
         if (jwtSurveyTokenManager.validateToken(token)) {
+            log.info("....token valid");
             // alınan tokenın içindeki studentid ve survey id ayıklanacak
-            Optional<String> studentIdOptional = jwtSurveyTokenManager.getUserId(token);
-            Optional<String> surveyIdOptional = jwtSurveyTokenManager.getSurveyId(token);
+            Optional<Long> studentIdOptional = jwtSurveyTokenManager.getUserId(token);
+            Optional<Long> surveyIdOptional = jwtSurveyTokenManager.getSurveyId(token);
             if (studentIdOptional.isPresent()) {
-                long studentId = Long.parseLong(studentIdOptional.get());
+                long studentId = studentIdOptional.get();
                 student = studentRepository.findById(studentId).get();
-            }
-            if (surveyIdOptional.isPresent()) {
-                long surveyId = Long.parseLong(surveyIdOptional.get());
-                survey = surveyRepository.findById(surveyId).get();
-            }
-            // ilgili id ye sahip survey öğrenciye atanmış mı kontrolü yapılacak ?
-            boolean isStudentCourse = false;
-            for (Course course : student.getCourses()) {
-                if (course.getId() == survey.getCourse().getId()) {
-                    isStudentCourse = true;
+
+                if (surveyIdOptional.isPresent()) {
+                    long surveyId = surveyIdOptional.get();
+                    survey = surveyRepository.findById(surveyId).get();
+
+                    TemplateDetailsResponseDto templateDetailsResponseDto = surveyTemplateService.getTemplateDetailsById(survey.getSurveyTemplate().getId());
+                    studentSurveyResponseDto = StudentSurveyResponseDto.builder().surveyTemplate(templateDetailsResponseDto)
+                            .studentId(student.getId()).build();
+                    return studentSurveyResponseDto;
                 }
             }
-            if (isStudentCourse) {
-                TemplateDetailsResponseDto templateDetailsResponseDto = surveyTemplateService.getTemplateDetailsById(survey.getSurveyTemplate().getId());
-                studentSurveyResponseDto = StudentSurveyResponseDto.builder().surveyTemplate(templateDetailsResponseDto)
-                        .studentId(student.getId()).build();
-                return studentSurveyResponseDto;
-            } else {
-                return studentSurveyResponseDto;
-            }
+
 
             // => survey hangi kursa atanmış => student id li öğrenc, bu kursa kayıtlıysa ok bu surveyi görebilir.
             // kullanıcıya survey detayları dönülecek (studentId, surveyId, templateId, sorular(idleri ile birlikte) ve optionlar(idleri ile birlikte) )
         }
-        return studentSurveyResponseDto;
+        return StudentSurveyResponseDto.builder().build();
     }
 }
