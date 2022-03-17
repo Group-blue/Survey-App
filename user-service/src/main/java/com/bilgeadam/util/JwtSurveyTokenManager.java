@@ -17,7 +17,7 @@ public class JwtSurveyTokenManager {
     private String secretkey;
 
 
-    public Optional<String> createToken(String userId,String surveyId,long expireAfter) {
+    public Optional<String> createToken(long userId,long surveyId,long expireAfter) {
         String token;
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretkey);

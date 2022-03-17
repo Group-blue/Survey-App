@@ -8,22 +8,31 @@ import com.bilgeadam.mapper.UserServiceMapper;
 import com.bilgeadam.rabbitmq.model.MailNotification;
 import com.bilgeadam.repository.ICourseRepository;
 import com.bilgeadam.repository.IStudentRepository;
+import com.bilgeadam.repository.ISurveyRepository;
 import com.bilgeadam.repository.entity.Course;
 import com.bilgeadam.repository.entity.Student;
+import com.bilgeadam.repository.entity.Survey;
+import com.bilgeadam.util.JwtSurveyTokenManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@Slf4j
 @Service
 public class StudentService {
     private final IStudentRepository studentRepository;
     private final UserServiceMapper mapper;
     private final ICourseRepository courseRepository;
+    private final JwtSurveyTokenManager jwtSurveyTokenManager;
+    private final ISurveyRepository surveyRepository;
 
-    public StudentService(IStudentRepository studentRepository, UserServiceMapper mapper, ICourseRepository courseRepository) {
+    public StudentService(IStudentRepository studentRepository, UserServiceMapper mapper, ICourseRepository courseRepository, JwtSurveyTokenManager jwtSurveyTokenManager, ISurveyRepository surveyRepository) {
         this.studentRepository = studentRepository;
         this.mapper = mapper;
         this.courseRepository = courseRepository;
+        this.jwtSurveyTokenManager = jwtSurveyTokenManager;
+        this.surveyRepository = surveyRepository;
     }
 
     public Student save(StudentRequestDto studentRequestDto) {
@@ -100,6 +109,22 @@ public class StudentService {
     }
 
     public void createTokensAndMailToUsers(MailNotification notification){
+            long courseId = notification.getCourseId();
+            long surveyId = notification.getSurveyId();
+            Optional<Survey> survey = surveyRepository.findById(surveyId);
+            if (survey.isPresent()){
+                long expireAfter = survey.get().getEndDate();
+                Optional<Course> course = courseRepository.findById(courseId);
+                if(course.isPresent()) {
+                    Set<Student> students = course.get().getStudents();
+                    for (Student student : students) {
+                        long id = student.getId();
+
+                        log.info(jwtSurveyTokenManager.createToken(id,surveyId,expireAfter).get());
+                    }
+                }
+            }
+
         // gelen kurs id sine göre o kursa kayıtlı öğrenciler listesini çekecek
         // survey id notification içinde var
         // her öğrenci için içinde surveyid ve öğrenci id olan bir token üretecek
