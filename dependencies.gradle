@@ -8,11 +8,13 @@ ext{
             openapi             : "1.6.5",
             mapstruct           : "1.4.2.Final",
             auth0               : "3.18.3"
+
     ]
 
 
     libs = [
             springBootWeb                   : "org.springframework.boot:spring-boot-starter-web:$versions.springBoot",
+            springBootTest                  : "org.springframework.boot:spring-boot-starter-test:$versions.springBoot",
             springDataJpa                   : "org.springframework.boot:spring-boot-starter-data-jpa:$versions.springBoot",
             springValidation                : "org.springframework.boot:spring-boot-starter-validation:$versions.springBoot",
             springSecurity                  : "org.springframework.boot:spring-boot-starter-security:$versions.springBoot",
@@ -32,6 +34,8 @@ ext{
             openapi                         : "org.springdoc:springdoc-openapi-ui:$versions.openapi",
             mapstruct                       : "org.mapstruct:mapstruct:$versions.mapstruct",
             mapstructProcessor              : "org.mapstruct:mapstruct-processor:$versions.mapstruct",
-            auth0Jwt                        : "com.auth0:java-jwt:$versions.auth0"
+            auth0Jwt                        : "com.auth0:java-jwt:$versions.auth0",
+            springMail                      : "org.springframework.boot:spring-boot-starter-mail:$versions.springBoot"
+
     ]
 }
