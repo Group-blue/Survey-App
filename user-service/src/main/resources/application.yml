@@ -23,7 +23,17 @@ spring:
     base-url: ${SURVEYAPP_TOOLS_LOADBALANCER_IP_HTTP}:${SURVEYAPP_TOOLS_ZIPKIN_PORT}
     service:
       name: user-service
-
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ba.surveyapp@gmail.com
+    password: ${SURVEYAPP_MAIL_PASSWORD}
+    protocol: smtp
+    tls: true
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
+      ssl.trust: smtp.gmail.com
 surveyapp:
   secretkey: ${SURVEYAPP_SECRET_CODE}
 

@@ -22,7 +22,7 @@ public class SurveyServiceSecurity extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
 
         http.authorizeRequests().antMatchers("/v3/api-docs/**",
-                        "/swagger-ui/**"
+                        "/swagger-ui/**","/studentanswers/save"
                         ).permitAll()
                 .anyRequest().authenticated();
 

@@ -4,13 +4,11 @@ import com.bilgeadam.dto.request.SaveSurveyRequestDto;
 import com.bilgeadam.dto.response.*;
 import com.bilgeadam.rabbitmq.model.MailNotification;
 import com.bilgeadam.rabbitmq.producer.SendMailToUsersProducer;
+import com.bilgeadam.repository.IStudentAnswersRepository;
 import com.bilgeadam.repository.IStudentRepository;
 import com.bilgeadam.repository.ISurveyRepository;
 import com.bilgeadam.repository.ISurveyTemlateRepository;
-import com.bilgeadam.repository.entity.Course;
-import com.bilgeadam.repository.entity.Student;
-import com.bilgeadam.repository.entity.Survey;
-import com.bilgeadam.repository.entity.SurveyTemplate;
+import com.bilgeadam.repository.entity.*;
 import com.bilgeadam.util.JwtSurveyTokenManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,14 +25,16 @@ public class SurveyService {
     private final JwtSurveyTokenManager jwtSurveyTokenManager;
     private final IStudentRepository studentRepository;
     private final SurveyTemplateService surveyTemplateService;
+    private final IStudentAnswersRepository studentAnswersRepository;
 
-    public SurveyService(ISurveyRepository surveyRepository, ISurveyTemlateRepository surveyTemlateRepository, SendMailToUsersProducer producer, JwtSurveyTokenManager jwtSurveyTokenManager, IStudentRepository studentRepository, SurveyTemplateService surveyTemplateService) {
+    public SurveyService(ISurveyRepository surveyRepository, ISurveyTemlateRepository surveyTemlateRepository, SendMailToUsersProducer producer, JwtSurveyTokenManager jwtSurveyTokenManager, IStudentRepository studentRepository, SurveyTemplateService surveyTemplateService, IStudentAnswersRepository studentAnswersRepository) {
         this.surveyRepository = surveyRepository;
         this.surveyTemlateRepository = surveyTemlateRepository;
         this.producer = producer;
         this.jwtSurveyTokenManager = jwtSurveyTokenManager;
         this.studentRepository = studentRepository;
         this.surveyTemplateService = surveyTemplateService;
+        this.studentAnswersRepository = studentAnswersRepository;
     }
 
     public Survey save(Survey survey) {
@@ -124,7 +124,12 @@ public class SurveyService {
 
                 if (surveyIdOptional.isPresent()) {
                     long surveyId = surveyIdOptional.get();
+
                     survey = surveyRepository.findById(surveyId).get();
+                    Optional<StudentAnswers> studentAnswers= studentAnswersRepository.findByStudentAndSurvey(student,survey);
+                    if (studentAnswers.isPresent()){
+                        return StudentSurveyResponseDto.builder().status(900).build();
+                    }
 
                     TemplateDetailsResponseDto templateDetailsResponseDto = surveyTemplateService.getTemplateDetailsById(survey.getSurveyTemplate().getId());
                     studentSurveyResponseDto = StudentSurveyResponseDto.builder().surveyTemplate(templateDetailsResponseDto)

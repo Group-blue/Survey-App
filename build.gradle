@@ -49,6 +49,7 @@ allprojects {
         implementation      libs.springDataJpa
         implementation      libs.springSecurity
         implementation      libs.auth0Jwt
+        implementation      libs.springMail
     }
 }
 configurations {

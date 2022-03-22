@@ -27,13 +27,15 @@ public class StudentService {
     private final ICourseRepository courseRepository;
     private final JwtSurveyTokenManager jwtSurveyTokenManager;
     private final ISurveyRepository surveyRepository;
+    EmailSenderService emailSenderService;
 
-    public StudentService(IStudentRepository studentRepository, UserServiceMapper mapper, ICourseRepository courseRepository, JwtSurveyTokenManager jwtSurveyTokenManager, ISurveyRepository surveyRepository) {
+    public StudentService(IStudentRepository studentRepository, UserServiceMapper mapper, ICourseRepository courseRepository, JwtSurveyTokenManager jwtSurveyTokenManager, ISurveyRepository surveyRepository, EmailSenderService emailSenderService) {
         this.studentRepository = studentRepository;
         this.mapper = mapper;
         this.courseRepository = courseRepository;
         this.jwtSurveyTokenManager = jwtSurveyTokenManager;
         this.surveyRepository = surveyRepository;
+        this.emailSenderService = emailSenderService;
     }
 
     public Student save(StudentRequestDto studentRequestDto) {
@@ -121,8 +123,9 @@ public class StudentService {
                 Set<Student> students = course.get().getStudents();
                 for (Student student : students) {
                     long id = student.getId();
-
-                    log.info(jwtSurveyTokenManager.createToken(id,surveyId,expireAfter).get());
+                    String studentEmail=student.getEmail();
+                    String token=jwtSurveyTokenManager.createToken(id,surveyId,expireAfter).get();
+                    emailSenderService.sendEmail(studentEmail,token);
                 }
             }
         }

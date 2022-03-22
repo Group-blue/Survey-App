@@ -18,6 +18,7 @@ public class StudentAnswers {
     private long timestamp;
     private boolean isFinished;
     private String answer;
+    private int type;
 
     @ManyToOne
     @JoinColumn(name = "student_id")
