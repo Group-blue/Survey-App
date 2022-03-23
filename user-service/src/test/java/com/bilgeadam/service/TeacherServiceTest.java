@@ -127,6 +127,16 @@ class TeacherServiceTest {
 
     @Test
     void update() {
+        Course course = mock(Course.class);
+        Topic topic = mock(Topic.class);
+        TeacherDetailResponseDto teacherDetailResponseDto = mock(TeacherDetailResponseDto.class);
 
+        when(teacherDetailResponseDto.getMasterCourses()).thenReturn(new ArrayList<>());
+        when(teacherDetailResponseDto.getAssistantCourses()).thenReturn(new ArrayList<>());
+        when(teacherDetailResponseDto.getTopics()).thenReturn(new ArrayList<>());
+
+        StatusDto result = teacherService.update(teacherDetailResponseDto);
+
+        assertEquals(result.getStatus(), 200);
     }
 }

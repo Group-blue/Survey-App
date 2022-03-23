@@ -77,6 +77,8 @@ public class TeacherService {
     }
 
     public Set<Course> getCoursesByDto(List<CourseBasicResponseDto> courseDtoList) {
+        if (courseDtoList.size()<1) return new HashSet<Course>();
+
         Set<Course> courses = new HashSet<>();
 
         for (CourseBasicResponseDto courseBasicResponseDto : courseDtoList) {
@@ -91,6 +93,8 @@ public class TeacherService {
     }
 
     public Set<Topic> getTopicsByDto(List<TopicResponseDto> topicDtoList) {
+        if (topicDtoList.size()<1) return new HashSet<Topic>();
+
         Set<Topic> topics = new HashSet<>();
 
         for (TopicResponseDto topicResponseDto : topicDtoList) {
@@ -105,23 +109,29 @@ public class TeacherService {
     }
 
     public void updateCoursesMasterTrainer(Set<Course> courses, Teacher teacher) {
-        for (Course course : courses) {
-            course.setMasterTrainer(teacher);
-            courseRepository.save(course);
+        if (courses.size()>0){
+            for (Course course : courses) {
+                course.setMasterTrainer(teacher);
+                courseRepository.save(course);
+            }
         }
     }
 
     public void updateCoursesAssistantTrainer(Set<Course> courses, Teacher teacher) {
-        for (Course course : courses) {
-            course.setAssistantTrainer(teacher);
-            courseRepository.save(course);
+        if (courses.size()>0){
+            for (Course course : courses) {
+                course.setAssistantTrainer(teacher);
+                courseRepository.save(course);
+            }
         }
     }
 
     public void updateTopicsTeacher(Set<Topic> topics, Teacher teacher) {
-        for (Topic topic : topics) {
-            topic.getTeachers().add(teacher);
-            topicRepository.save(topic);
+        if (topics.size()>0){
+            for (Topic topic : topics) {
+                topic.getTeachers().add(teacher);
+                topicRepository.save(topic);
+            }
         }
     }
 
