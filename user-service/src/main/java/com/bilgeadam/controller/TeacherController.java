@@ -1,6 +1,7 @@
 package com.bilgeadam.controller;
 
 import com.bilgeadam.dto.request.TeacherRequestDto;
+import com.bilgeadam.dto.response.StatusDto;
 import com.bilgeadam.dto.response.TeacherDetailResponseDto;
 import com.bilgeadam.dto.response.TeacherResponseDto;
 import com.bilgeadam.service.TeacherService;
@@ -37,7 +38,7 @@ public class TeacherController {
         return ResponseEntity.ok(teacherService.getTeacherDetailById(id));
     }
     @PostMapping("/update")
-    public ResponseEntity<Boolean> update(TeacherDetailResponseDto dto){
+    public ResponseEntity<StatusDto> update(TeacherDetailResponseDto dto){
         return ResponseEntity.ok(teacherService.update(dto));
     }
 }

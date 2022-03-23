@@ -11,6 +11,12 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class TeacherDetailResponseDto {
+    /**
+     * 200 -> OK
+     * 404 -> Not Found
+     * 500 -> Server Error
+     */
+    private int status;
     private long id;
     private long teacherId;
     private long employeeId;
