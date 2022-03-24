@@ -124,8 +124,8 @@ public class SurveyService {
                     long surveyId = surveyIdOptional.get();
 
                     survey = surveyRepository.findById(surveyId).get();
-                    Optional<StudentAnswers> studentAnswers= studentAnswersRepository.findByStudentAndSurvey(student,survey);
-                    if (studentAnswers.isPresent()){
+                    List<StudentAnswers> studentAnswers= studentAnswersRepository.findByStudentAndSurvey(student,survey);
+                    if (!studentAnswers.isEmpty()){
                         return StudentSurveyResponseDto.builder().status(900).build();
                     }
 

@@ -38,10 +38,6 @@ class SurveyServiceTest {
     @Mock
     private IStudentAnswersRepository studentAnswersRepository;
 
-    @Test
-    void save() {
-        verify(surveyRepository).save(ArgumentMatchers.any(Survey.class));
-    }
 
     @Test
     void listAllSurveys() {
