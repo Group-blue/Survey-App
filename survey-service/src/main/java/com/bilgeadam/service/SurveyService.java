@@ -112,10 +112,8 @@ public class SurveyService {
         Survey survey;
         StudentSurveyResponseDto studentSurveyResponseDto;
 
-        // token valid mi kontrolü yapılacak ?
         if (jwtSurveyTokenManager.validateToken(token)) {
             log.info("....token valid");
-            // alınan tokenın içindeki studentid ve survey id ayıklanacak
             Optional<Long> studentIdOptional = jwtSurveyTokenManager.getUserId(token);
             Optional<Long> surveyIdOptional = jwtSurveyTokenManager.getSurveyId(token);
             if (studentIdOptional.isPresent()) {

@@ -57,7 +57,8 @@ public class SurveyTemplateService {
 
         List<Question> questionsFromDb = questionService.saveList(questions);
         for(Question question: questionsFromDb){
-            possibleAnswersService.saveList(new ArrayList<>(question.getPossibleAnswers()));
+            if(question.getPossibleAnswers()!=null)
+                possibleAnswersService.saveList(new ArrayList<>(question.getPossibleAnswers()));
         }
 
         SurveyTemplate surveyTemplate;
